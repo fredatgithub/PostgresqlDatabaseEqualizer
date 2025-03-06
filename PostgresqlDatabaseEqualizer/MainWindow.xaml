@@ -1,0 +1,68 @@
+﻿<Window x:Class="PostgresqlDatabaseEqualizer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PostgresqlDatabaseEqualizer"
+        mc:Ignorable="d"
+        Title="Postgresql Databases Equalizer" Height="450" Width="800">
+    <Grid>
+    <TabControl>
+      <TabItem Header="Connection">
+        <Grid Background="#FFE5E5E5">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Name="ConnectionSource" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Margin="10,0,10,0">
+            <Label Content="Postgresql Database Source" FontSize="16" FontWeight="Bold"/>
+            <Label Content="Host"/>
+            <TextBox/>
+            <Label Content="Port"/>
+            <TextBox/>
+            <Label Content="Database"/>
+            <TextBox/>
+            <Label Content="Schema"/>
+            <TextBox/>
+            <Label Content="User"/>
+            <TextBox/>
+            <Label Content="Password"/>
+            <PasswordBox/>
+            <Label Content=""/>
+            <Button Content="Connect"/>
+
+          </StackPanel>
+          <StackPanel Name="ConnectionTarget" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" Margin="10,0,10,0">
+            <Label Content="Postgresql Database Target" FontSize="16" FontWeight="Bold"/>
+            <Label Content="Host"/>
+            <TextBox/>
+            <Label Content="Port"/>
+            <TextBox/>
+            <Label Content="Database"/>
+            <TextBox/>
+            <Label Content="Schema"/>
+            <TextBox/>
+            <Label Content="User"/>
+            <TextBox/>
+            <Label Content="Password"/>
+            <PasswordBox/>
+            <Label Content=""/>
+            <Button Content="Connect"/>
+          </StackPanel>
+          
+        </Grid>
+      </TabItem>
+      <TabItem Header="Schemas">
+        <Grid Background="#FFE5E5E5"/>
+      </TabItem>
+      <TabItem Header="Tables">
+        <Grid Background="#FFE5E5E5"/>
+      </TabItem>
+    </TabControl>
+
+  </Grid>
+</Window>
