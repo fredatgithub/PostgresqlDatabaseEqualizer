@@ -23,7 +23,7 @@
             <Label Content="Host"/>
             <TextBox/>
             <Label Content="Port"/>
-            <TextBox/>
+            <TextBox Text="5432"/>
             <Label Content="Database"/>
             <TextBox/>
             <Label Content="Schema"/>
@@ -41,7 +41,7 @@
             <Label Content="Host"/>
             <TextBox/>
             <Label Content="Port"/>
-            <TextBox/>
+            <TextBox Text="5432"/>
             <Label Content="Database"/>
             <TextBox/>
             <Label Content="Schema"/>
