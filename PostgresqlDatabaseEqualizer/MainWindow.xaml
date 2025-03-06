@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PostgresqlDatabaseEqualizer"
         mc:Ignorable="d"
-        Title="Postgresql Databases Equalizer" Height="450" Width="800">
-    <Grid>
+        Title="Postgresql Database Equalizer" Height="1024" Width="1800">
+  <Grid>
     <TabControl>
       <TabItem Header="Connection">
         <Grid Background="#FFE5E5E5">
@@ -21,39 +21,39 @@
           <StackPanel Name="ConnectionSource" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Margin="10,0,10,0">
             <Label Content="Postgresql Database Source" FontSize="16" FontWeight="Bold"/>
             <Label Content="Host"/>
-            <TextBox/>
+            <TextBox Name="SourceHost"/>
             <Label Content="Port"/>
-            <TextBox Text="5432"/>
-            <Label Content="Database"/>
-            <TextBox/>
+            <TextBox Name="SourcePort" Text="5432"/>
+            <Label Content="Database Name"/>
+            <TextBox Name="SourceDatabaseName"/>
             <Label Content="Schema"/>
-            <TextBox/>
-            <Label Content="User"/>
-            <TextBox/>
+            <TextBox Name="SourceSchema"/>
+            <Label Content="Username"/>
+            <TextBox Name="SourceUsername"/>
             <Label Content="Password"/>
-            <PasswordBox/>
+            <PasswordBox Name="SourcePassword"/>
             <Label Content=""/>
-            <Button Content="Connect"/>
+            <Button Name="ButtonConnectionSource" Content="Test Connection"/>
 
           </StackPanel>
           <StackPanel Name="ConnectionTarget" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" Margin="10,0,10,0">
             <Label Content="Postgresql Database Target" FontSize="16" FontWeight="Bold"/>
             <Label Content="Host"/>
-            <TextBox/>
+            <TextBox Name="TargetHost"/>
             <Label Content="Port"/>
-            <TextBox Text="5432"/>
-            <Label Content="Database"/>
-            <TextBox/>
+            <TextBox Name="TargetPort" Text="5432"/>
+            <Label Content="Database Name"/>
+            <TextBox Name="TargetDatabaseName"/>
             <Label Content="Schema"/>
-            <TextBox/>
-            <Label Content="User"/>
-            <TextBox/>
+            <TextBox Name="TargetSchema"/>
+            <Label Content="Username"/>
+            <TextBox Name="TargetUsername"/>
             <Label Content="Password"/>
-            <PasswordBox/>
+            <PasswordBox Name="TargetPassword"/>
             <Label Content=""/>
-            <Button Content="Connect"/>
+            <Button Name="ButtonConnectionTarget" Content="Test Connection" Click="ButtonConnectionTarget_Click"/>
           </StackPanel>
-          
+
         </Grid>
       </TabItem>
       <TabItem Header="Schemas">
