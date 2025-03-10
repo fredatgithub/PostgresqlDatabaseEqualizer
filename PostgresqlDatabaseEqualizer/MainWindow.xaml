@@ -9,15 +9,32 @@
   <Grid>
     <TabControl>
       <TabItem Header="Files">
-        <Grid Background="#FFE5E5E5">
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-          </Grid.RowDefinitions>
+        <Grid Background="#FFE5E5E5" Margin="10">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
           </Grid.ColumnDefinitions>
+
+          <GroupBox Header="Files configuration" Grid.Column="0" Margin="10,43,10,22" FontStyle="Normal" FontWeight="Bold">
+            <StackPanel Margin="10">
+              <Label Content="Server:" Name="lblConfigurationFile" FontStyle="Normal" FontWeight="Bold"/>
+              <ComboBox Name="cboConfigurationFile"
+               Margin="0,0,0,10"
+               SelectedIndex="0"
+               FontStyle="Normal" FontWeight="Bold">
+              </ComboBox>
+              
+              <TextBox Margin="0,0,0,10" Name="txtConfigurationFile" FontStyle="Normal" FontWeight="Medium" Height="*"/>
+              <Button Content="Save configuration file" 
+                           Margin="0,0,0,10" 
+                           Padding="10,5"
+                           Background="#FF007ACC"
+                           Foreground="White"
+                           Height="30"
+                           Name="btnSaveConfigurationFile"
+             Click="BtnSaveConfigurationFile_Click"/>
+
+            </StackPanel> 
+          </GroupBox>
         </Grid>
       </TabItem>
       <TabItem Header="Connection">
