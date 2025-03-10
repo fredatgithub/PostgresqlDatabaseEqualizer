@@ -34,7 +34,8 @@
                       SelectedIndex="0"
                       FontStyle="Normal"
                       FontWeight="Bold"
-                      Grid.Row="1">
+                      Grid.Row="1"
+                        SelectionChanged="CboConfigurationFile_SelectionChanged">
               </ComboBox>
 
               <TextBox Name="txtConfigurationFile"
