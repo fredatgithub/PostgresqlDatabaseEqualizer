@@ -50,6 +50,8 @@ namespace PostgresqlDatabaseEqualizer
       if (filename == _sourceFilename && File.ReadAllLines(filename).Length == 0)
       {
         // write the content
+        // encrypt the content first before writing it to the file
+        // TODO : encrypt the content
         File.WriteAllText(filename, "Host=localhost;Port=5432;Username=username;Password=password;Database=databaseName;");
       }
 
@@ -89,7 +91,7 @@ namespace PostgresqlDatabaseEqualizer
       //MessageBox.Show("Please enter a connection string", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
     }
 
-    private void CreateFileIfNotExist(string fileName)
+    private static void CreateFileIfNotExist(string fileName)
     {
       string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
       if (!File.Exists(filePath))
