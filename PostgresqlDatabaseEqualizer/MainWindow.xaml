@@ -15,27 +15,48 @@
           </Grid.ColumnDefinitions>
 
           <GroupBox Header="Files configuration" Grid.Column="0" Margin="10,43,10,22" FontStyle="Normal" FontWeight="Bold">
-            <StackPanel Margin="10">
-              <Label Content="Server:" Name="lblConfigurationFile" FontStyle="Normal" FontWeight="Bold"/>
-              <ComboBox Name="cboConfigurationFile"
-               Margin="0,0,0,10"
-               SelectedIndex="0"
-               FontStyle="Normal" FontWeight="Bold">
-              </ComboBox>
-              
-              <TextBox Margin="0,0,0,10" Name="txtConfigurationFile" FontStyle="Normal" FontWeight="Medium" Height="*"/>
-              <Button Content="Save configuration file" 
-                           Margin="0,0,0,10" 
-                           Padding="10,5"
-                           Background="#FF007ACC"
-                           Foreground="White"
-                           Height="30"
-                           Name="btnSaveConfigurationFile"
-             Click="BtnSaveConfigurationFile_Click"/>
+            <Grid Margin="10">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Label -->
+                <RowDefinition Height="Auto"/>
+                <!-- ComboBox -->
+                <RowDefinition Height="*"/>
+                <!-- TextBox qui prend tout l'espace restant -->
+                <RowDefinition Height="Auto"/>
+                <!-- Bouton -->
+              </Grid.RowDefinitions>
 
-            </StackPanel> 
+              <Label Content="Choose the file to edit:" Name="lblConfigurationFile" FontStyle="Normal" FontWeight="Bold" Grid.Row="0"/>
+
+              <ComboBox Name="cboConfigurationFile"
+                      Margin="0,0,0,10"
+                      SelectedIndex="0"
+                      FontStyle="Normal"
+                      FontWeight="Bold"
+                      Grid.Row="1">
+              </ComboBox>
+
+              <TextBox Name="txtConfigurationFile"
+                     FontStyle="Normal"
+                     FontWeight="Medium"
+                     Margin="0,0,0,10"
+                     Grid.Row="2"
+                     VerticalAlignment="Stretch"/>
+
+              <Button Content="Save configuration file"
+                    Margin="0,0,0,10"
+                    Padding="10,5"
+                    Background="#FF007ACC"
+                    Foreground="White"
+                    Height="30"
+                    Name="btnSaveConfigurationFile"
+                    Click="BtnSaveConfigurationFile_Click"
+                    Grid.Row="3"/>
+            </Grid>
           </GroupBox>
         </Grid>
+
       </TabItem>
       <TabItem Header="Connection">
         <Grid Background="#FFE5E5E5">

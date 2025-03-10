@@ -13,13 +13,12 @@ namespace PostgresqlDatabaseEqualizer
   {
     private bool _sourceConnectionOK;
     private bool _destinationConnectionOK;
-    private string _schemaFilename;
+    private const string _schemaFilename = "schemas.txt";
     private List<string> _allSchemas;
 
     public MainWindow()
     {
       InitializeComponent();
-      _schemaFilename = "schemas.txt";
       CheckFilePresence(_schemaFilename);
       LoadConfigurationFileComboBox();
     }
@@ -28,6 +27,13 @@ namespace PostgresqlDatabaseEqualizer
     {
       cboConfigurationFile.Items.Clear();
       cboConfigurationFile.Items.Add(_schemaFilename);
+      cboConfigurationFile.SelectedIndex = 0;
+      LoadFileContentIntoTextBox();
+    }
+
+    private void LoadFileContentIntoTextBox()
+    {
+      txtConfigurationFile.Text = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, cboConfigurationFile.SelectedItem.ToString()));
     }
 
     private void ButtonConnectionTarget_Click(object sender, RoutedEventArgs e)
@@ -64,7 +70,12 @@ namespace PostgresqlDatabaseEqualizer
 
     private void BtnSaveConfigurationFile_Click(object sender, RoutedEventArgs e)
     {
+      // save the content of the textbox to the file by replacing the content
 
+      File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, cboConfigurationFile.SelectedItem.ToString()), txtConfigurationFile.Text);
+      // reload the content of the file
+      LoadFileContentIntoTextBox();
+      MessageBox.Show("Configuration file saved", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
     }
   }
 }
