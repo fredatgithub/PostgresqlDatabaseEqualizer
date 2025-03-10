@@ -8,6 +8,18 @@
         Title="Postgresql Database Equalizer" Height="700" Width="1024">
   <Grid>
     <TabControl>
+      <TabItem Header="Files">
+        <Grid Background="#FFE5E5E5">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+        </Grid>
+      </TabItem>
       <TabItem Header="Connection">
         <Grid Background="#FFE5E5E5">
           <Grid.RowDefinitions>
@@ -33,7 +45,10 @@
             <Label Content="Password"/>
             <PasswordBox Name="SourcePassword"/>
             <Label Content=""/>
-            <Button Name="ButtonConnectionSource" Content="Test Connection"/>
+            <Button Name="ButtonConnectionSource" Content="Test Connection" 
+                    Background="#FF007ACC"
+                    Foreground="White"
+                    Height="30"/>
 
           </StackPanel>
           <StackPanel Name="ConnectionTarget" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" Margin="10,0,10,0">
@@ -51,7 +66,10 @@
             <Label Content="Password"/>
             <PasswordBox Name="TargetPassword"/>
             <Label Content=""/>
-            <Button Name="ButtonConnectionTarget" Content="Test Connection" Click="ButtonConnectionTarget_Click"/>
+            <Button Name="ButtonConnectionTarget" Content="Test Connection" Click="ButtonConnectionTarget_Click"
+                    Background="#FF007ACC"
+                    Foreground="White"
+                    Height="30"/>
           </StackPanel>
 
         </Grid>
