@@ -35,7 +35,7 @@
                       FontStyle="Normal"
                       FontWeight="Bold"
                       Grid.Row="1"
-                        SelectionChanged="CboConfigurationFile_SelectionChanged">
+                      SelectionChanged="CboConfigurationFile_SelectionChanged">
               </ComboBox>
 
               <TextBox Name="txtConfigurationFile"
@@ -43,7 +43,8 @@
                      FontWeight="Medium"
                      Margin="0,0,0,10"
                      Grid.Row="2"
-                     VerticalAlignment="Stretch"/>
+                     VerticalAlignment="Stretch"
+                       FontSize="14"/>
 
               <Button Content="Save configuration file"
                     Margin="0,0,0,10"
@@ -118,6 +119,17 @@
       </TabItem>
       <TabItem Header="Tables">
         <Grid Background="#FFE5E5E5"/>
+      </TabItem>
+      <TabItem Header="Logs">
+        <Grid Margin="10">
+          <TextBox Name="txtLogs" 
+                        IsReadOnly="True"
+                        TextWrapping="Wrap"
+                        VerticalScrollBarVisibility="Auto"
+                        AcceptsReturn="True"
+                        FontFamily="Consolas"
+                        FontSize="14"/>
+        </Grid>
       </TabItem>
     </TabControl>
 

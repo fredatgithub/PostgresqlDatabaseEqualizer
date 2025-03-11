@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("PostgresqlDatabaseEqualizer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("e-SNCF")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("PostgresqlDatabaseEqualizer")]
-[assembly: AssemblyCopyright("Copyright © e-SNCF 2025")]
+[assembly: AssemblyCopyright("Copyright © Freddy Juhel 2025 MIT")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
