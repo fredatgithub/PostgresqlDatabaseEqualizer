@@ -1,20 +1,17 @@
-﻿using System;
+﻿using PostgresqlDatabaseEqualizer.Properties;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Windows;
-using PostgresqlDatabaseEqualizer.Helpers;
-using PostgresqlDatabaseEqualizer.Models;
-using PostgresqlDatabaseEqualizer.Properties;
 
 namespace PostgresqlDatabaseEqualizer
 {
   /// <summary>
   /// Interaction Logic for MainWindow.xaml
   /// </summary>
-  public partial class MainWindow: Window
+  public partial class MainWindow : Window
   {
     private bool _sourceConnectionOK;
     private bool _destinationConnectionOK;
@@ -46,19 +43,19 @@ namespace PostgresqlDatabaseEqualizer
       CreateFileIfNotExist(_sourceFilename2);
       CreateFileIfNotExist(_sourceFilename3);
       CreateFileIfNotExist(_sourceFilename4);
-      
+
       CreateFileIfNotExist(_targetFilename1);
       CreateFileIfNotExist(_targetFilename2);
       CreateFileIfNotExist(_targetFilename3);
       CreateFileIfNotExist(_targetFilename4);
-      
+
       FillFileIfEmpty(_schemaFilename);
-      
+
       FillFileIfEmpty(_sourceFilename1);
       FillFileIfEmpty(_sourceFilename2);
       FillFileIfEmpty(_sourceFilename3);
       FillFileIfEmpty(_sourceFilename4);
-      
+
       FillFileIfEmpty(_targetFilename1);
       FillFileIfEmpty(_targetFilename2);
       FillFileIfEmpty(_targetFilename3);
