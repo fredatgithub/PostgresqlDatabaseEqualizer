@@ -1,4 +1,5 @@
-﻿using PostgresqlDatabaseEqualizer.Properties;
+﻿using PostgresqlDatabaseEqualizer.Helpers;
+using PostgresqlDatabaseEqualizer.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +12,7 @@ namespace PostgresqlDatabaseEqualizer
   /// <summary>
   /// Interaction Logic for MainWindow.xaml
   /// </summary>
-  public partial class MainWindow : Window
+  public partial class MainWindow: Window
   {
     private bool _sourceConnectionOK;
     private bool _destinationConnectionOK;
@@ -20,7 +21,6 @@ namespace PostgresqlDatabaseEqualizer
     private const string _sourceFilename2 = "sourceConnectionStringSchema2.txt";
     private const string _sourceFilename3 = "sourceConnectionStringSchema3.txt";
     private const string _sourceFilename4 = "sourceConnectionStringSchema4.txt";
-
 
     private const string _targetFilename1 = "targetConnectionStringSchema1.txt";
     private const string _targetFilename2 = "targetConnectionStringSchema2.txt";
@@ -67,29 +67,30 @@ namespace PostgresqlDatabaseEqualizer
     {
       if (filename == _schemaFilename && File.ReadAllLines(filename).Length == 0)
       {
-        // write the content
-        File.WriteAllText(filename, "schema1");
-        // add another schema
-        File.AppendAllText(filename, Environment.NewLine + "schema2");
-        // add another schema
-        File.AppendAllText(filename, Environment.NewLine + "schema3");
-        // add another schema
-        File.AppendAllText(filename, Environment.NewLine + "schema4");
-        _allSchemas = File.ReadAllLines(filename).ToList();
+        var clearContent = string.Format("schema1{0}schema2{0}schema3{0}schema4", Environment.NewLine);
+        var encryptedContent = EncryptionHelper.Encrypt(clearContent);
+        File.WriteAllText(filename, encryptedContent);
+        var allSchemasEncrypted = File.ReadAllLines(filename).ToList();
+        _allSchemas = new List<string>();
+        foreach (var oneSchema in allSchemasEncrypted)
+        {
+          _allSchemas.Add(EncryptionHelper.Decrypt(oneSchema));
+        }
       }
 
       if (File.ReadAllLines(filename).Length == 0 && (filename == _sourceFilename1 || filename == _sourceFilename2 || filename == _sourceFilename3 || filename == _sourceFilename4))
       {
-        // write the content
         // encrypt the content first before writing it to the file
-        // TODO : encrypt the content
-        File.WriteAllText(filename, "Host=localhost;Port=5432;Username=username;Password=password;Database=databaseName;");
+        const string clearContent = "Host=localhost;Port=5432;Username=username;Password=password;Database=databaseName;";
+        var encryptedContent = EncryptionHelper.Encrypt(clearContent);
+        File.WriteAllText(filename, encryptedContent);
       }
 
       if (File.ReadAllLines(filename).Length == 0 && (filename == _targetFilename1 || filename == _targetFilename2 || filename == _targetFilename3 || filename == _targetFilename4))
       {
-        // write the content
-        File.WriteAllText(filename, "Host=localhost;Port=5432;Username=username;Password=password;Database=databaseName;");
+        const string clearContent = "Host=localhost;Port=5432;Username=username;Password=password;Database=databaseName;";
+        var encryptedContent = EncryptionHelper.Encrypt(clearContent);
+        File.WriteAllText(filename, encryptedContent);
       }
     }
 
@@ -98,7 +99,13 @@ namespace PostgresqlDatabaseEqualizer
       cboConfigurationFile.Items.Clear();
       cboConfigurationFile.Items.Add(_schemaFilename);
       cboConfigurationFile.Items.Add(_sourceFilename1);
+      cboConfigurationFile.Items.Add(_sourceFilename2);
+      cboConfigurationFile.Items.Add(_sourceFilename3);
+      cboConfigurationFile.Items.Add(_sourceFilename4);
       cboConfigurationFile.Items.Add(_targetFilename1);
+      cboConfigurationFile.Items.Add(_targetFilename2);
+      cboConfigurationFile.Items.Add(_targetFilename3);
+      cboConfigurationFile.Items.Add(_targetFilename4);
       cboConfigurationFile.SelectedIndex = 0;
       LoadFileContentIntoTextBox();
     }
@@ -111,7 +118,9 @@ namespace PostgresqlDatabaseEqualizer
         File.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, cboConfigurationFile.SelectedItem.ToString())).Close();
       }
       // load the content of the file into the textbox
-      txtConfigurationFile.Text = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, cboConfigurationFile.SelectedItem.ToString()));
+      // decrypt the content first before loading it into the textbox
+      var decryptedContent = EncryptionHelper.Decrypt(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, cboConfigurationFile.SelectedItem.ToString())));
+      txtConfigurationFile.Text = decryptedContent;
     }
 
     private void ButtonConnectionTarget_Click(object sender, RoutedEventArgs e)
@@ -127,16 +136,15 @@ namespace PostgresqlDatabaseEqualizer
       string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
       if (!File.Exists(filePath))
       {
-        // create the file
         File.Create(filePath).Close();
-
       }
     }
 
     private void BtnSaveConfigurationFile_Click(object sender, RoutedEventArgs e)
     {
       // save the content of the textbox to the file by replacing the content
-      File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, cboConfigurationFile.SelectedItem.ToString()), txtConfigurationFile.Text);
+      // encrypt the content first before writing it to the file
+      File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, cboConfigurationFile.SelectedItem.ToString()), EncryptionHelper.Encrypt(txtConfigurationFile.Text));
       // reload the content of the file
       LoadFileContentIntoTextBox();
       MessageBox.Show("Configuration file saved", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -149,31 +157,73 @@ namespace PostgresqlDatabaseEqualizer
 
     private void Window_Closing(object sender, CancelEventArgs e)
     {
-      // Save window position and size
       var settings = Settings.Default;
 
-      if (WindowState == WindowState.Normal)
+      // Save window state (Normal, Maximized)
+      settings.WindowState = this.WindowState.ToString();
+
+      // Save window size and position only if it's in Normal state
+      if (this.WindowState == WindowState.Normal)
       {
         settings.WindowTop = Top;
         settings.WindowLeft = Left;
         settings.WindowHeight = Height;
         settings.WindowWidth = Width;
       }
-      else
-      {
-        settings.WindowTop = RestoreBounds.Top;
-        settings.WindowLeft = RestoreBounds.Left;
-        settings.WindowHeight = RestoreBounds.Height;
-        settings.WindowWidth = RestoreBounds.Width;
-      }
+
+      // Save the current screen's working area (for multi-monitor setups)
+      var screen = System.Windows.SystemParameters.WorkArea;
+      settings.LastScreenWidth = screen.Width;
+      settings.LastScreenHeight = screen.Height;
 
       settings.Save();
-
-      // Save ID
-      SaveCredentials();
-
-      // Save logs
       SaveLogs();
+    }
+
+
+    private void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+      // Load window size and position if saved
+      var settings = Settings.Default;
+
+      if (settings.WindowWidth > 0 && settings.WindowHeight > 0)
+      {
+        Width = settings.WindowWidth;
+        Height = settings.WindowHeight;
+      }
+
+      if (settings.WindowLeft >= 0 && settings.WindowTop >= 0)
+      {
+        Left = settings.WindowLeft;
+        Top = settings.WindowTop;
+      }
+
+      // Get the current screen dimensions
+      var currentScreen = SystemParameters.WorkArea;
+
+      // Check if the saved screen matches the current screen
+      bool isSameScreen = settings.LastScreenWidth == currentScreen.Width &&
+                          settings.LastScreenHeight == currentScreen.Height;
+
+      // If the screen setup changed, center the window on the primary screen
+      if (!isSameScreen || Left < 0 || Top < 0 || Left + Width > currentScreen.Width || Top + Height > currentScreen.Height)
+      {
+        Left = (currentScreen.Width - Width) / 2;
+        Top = (currentScreen.Height - Height) / 2;
+      }
+
+      // Restore the saved window state (Normal or Maximized)
+      if (Enum.TryParse(settings.WindowState, out WindowState state))
+      {
+        WindowState = state;
+      }
+
+      LoadLogs();
+    }
+
+    private void LoadLogs()
+    {
+      txtLogs.Text = File.Exists(_logFile) ? File.ReadAllText(_logFile) : string.Empty;
     }
 
     private void SaveLogs()
@@ -197,11 +247,6 @@ namespace PostgresqlDatabaseEqualizer
         txtLogs.ScrollToEnd();
         SaveLogs();
       });
-    }
-
-    private void SaveCredentials()
-    {
-      // add whatever you want ti save here
     }
   }
 }
