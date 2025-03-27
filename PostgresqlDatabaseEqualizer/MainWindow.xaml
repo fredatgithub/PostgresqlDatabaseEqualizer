@@ -74,6 +74,14 @@
           </Grid.ColumnDefinitions>
           <StackPanel Name="ConnectionSource" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Margin="10,0,10,0">
             <Label Content="Postgresql Database Source" FontSize="16" FontWeight="Bold"/>
+            <Label Content=""/>
+            <Label Content="Source connection"/>
+            <ComboBox Name="SourceConnectionString" SelectedIndex="0" SelectionChanged="SourceConnectionString_SelectionChanged" DisplayMemberPath="Nom">
+              <ComboBoxItem Content=""/>
+              <ComboBoxItem Content=""/>
+              <ComboBoxItem Content=""/>
+              <ComboBoxItem Content=""/>
+            </ComboBox>
             <Label Content="Host"/>
             <TextBox Name="SourceHost"/>
             <Label Content="Port"/>
@@ -95,6 +103,14 @@
           </StackPanel>
           <StackPanel Name="ConnectionTarget" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" Margin="10,0,10,0">
             <Label Content="Postgresql Database Target" FontSize="16" FontWeight="Bold"/>
+            <Label Content=""/>
+            <Label Content="Source connection"/>
+            <ComboBox Name="TargetConnectionString" SelectedIndex="0">
+              <ComboBoxItem Content=""/>
+              <ComboBoxItem Content=""/>
+              <ComboBoxItem Content=""/>
+              <ComboBoxItem Content=""/>
+            </ComboBox>
             <Label Content="Host"/>
             <TextBox Name="TargetHost"/>
             <Label Content="Port"/>

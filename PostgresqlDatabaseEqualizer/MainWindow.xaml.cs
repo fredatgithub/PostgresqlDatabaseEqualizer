@@ -1,11 +1,12 @@
-﻿using PostgresqlDatabaseEqualizer.Helpers;
-using PostgresqlDatabaseEqualizer.Properties;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using PostgresqlDatabaseEqualizer.Helpers;
+using PostgresqlDatabaseEqualizer.Properties;
 
 namespace PostgresqlDatabaseEqualizer
 {
@@ -123,6 +124,14 @@ namespace PostgresqlDatabaseEqualizer
       txtConfigurationFile.Text = decryptedContent;
     }
 
+    private static List<string> GetListOfSchema()
+    {
+      var decryptedContent = EncryptionHelper.Decrypt(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _schemaFilename)));
+      return decryptedContent
+           .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)
+           .ToList();
+    }
+
     private void ButtonConnectionTarget_Click(object sender, RoutedEventArgs e)
     {
       //SourceConnectionTextBox.IsEnabled = false;
@@ -160,10 +169,10 @@ namespace PostgresqlDatabaseEqualizer
       var settings = Settings.Default;
 
       // Save window state (Normal, Maximized)
-      settings.WindowState = this.WindowState.ToString();
+      settings.WindowState = WindowState.ToString();
 
       // Save window size and position only if it's in Normal state
-      if (this.WindowState == WindowState.Normal)
+      if (WindowState == WindowState.Normal)
       {
         settings.WindowTop = Top;
         settings.WindowLeft = Left;
@@ -172,7 +181,7 @@ namespace PostgresqlDatabaseEqualizer
       }
 
       // Save the current screen's working area (for multi-monitor setups)
-      var screen = System.Windows.SystemParameters.WorkArea;
+      var screen = SystemParameters.WorkArea;
       settings.LastScreenWidth = screen.Width;
       settings.LastScreenHeight = screen.Height;
 
@@ -182,6 +191,13 @@ namespace PostgresqlDatabaseEqualizer
 
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+      LoadWindowSize();
+      LoadLogs();
+      LoadConnectionComboBoxes();
+    }
+
+    private void LoadWindowSize()
     {
       // Load window size and position if saved
       var settings = Settings.Default;
@@ -217,8 +233,74 @@ namespace PostgresqlDatabaseEqualizer
       {
         WindowState = state;
       }
+    }
 
-      LoadLogs();
+    private void LoadConnectionComboBoxes()
+    {
+      // load the connection strings into the comboboxes of the connection tab
+      var listOfItems = GetListOfSchema();
+      SourceConnectionString.Items.Clear();
+      TargetConnectionString.Items.Clear();
+      foreach (var item in listOfItems)
+      {
+        SourceConnectionString.Items.Add(item);
+        TargetConnectionString.Items.Add(item);
+      }
+
+      //if (SourceConnectionString.SelectedIndex == -1)
+      //{
+      //  SourceConnectionString.SelectedIndex = 0;
+      //}
+
+      //if (TargetConnectionString.SelectedIndex == -1)
+      //{
+      //  TargetConnectionString.SelectedIndex = 0;
+      //}
+    }
+
+    private void SourceConnectionString_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      // todo debug this method
+      if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
+      {
+        string selectedValue = selectedItem.Content.ToString();
+        LoadConnectionItems(selectedValue);
+      }
+    }
+
+    private void LoadConnectionItems(string selectedValue)
+    {
+      if (string.IsNullOrEmpty(selectedValue))
+      {
+        return;
+      }
+
+      // get connection string items from the selected item
+      var decryptedContent = EncryptionHelper.Decrypt(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, selectedValue)));
+      var connectionStringItems = decryptedContent.Split(';').ToList();
+      foreach (var item in connectionStringItems)
+      {
+        if (item.Contains("Host"))
+        {
+          SourceHost.Text = item.Split('=')[1];
+        }
+        if (item.Contains("Port"))
+        {
+          SourcePort.Text = item.Split('=')[1];
+        }
+        if (item.Contains("Username"))
+        {
+          SourceUsername.Text = item.Split('=')[1];
+        }
+        if (item.Contains("Password"))
+        {
+          SourcePassword.Password = item.Split('=')[1];
+        }
+        if (item.Contains("Database"))
+        {
+          SourceDatabaseName.Text = item.Split('=')[1];
+        }
+      }
     }
 
     private void LoadLogs()
