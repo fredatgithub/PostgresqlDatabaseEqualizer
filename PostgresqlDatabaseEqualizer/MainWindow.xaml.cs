@@ -261,19 +261,69 @@ namespace PostgresqlDatabaseEqualizer
         }
 
         LogMessage($"La sélection de la source de la connection string est : {selectedValue}");
-        await LoadConnectionItems(selectedValue);
+        await LoadSourceConnectionItems(selectedValue);
       }
     }
 
-    private async Task LoadConnectionItems(string selectedValue)
+    private async void TargetConnectionString_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      if (string.IsNullOrEmpty(selectedValue))
+      if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
+      {
+        string selectedValueVar = selectedItem.Content.ToString();
+        if (string.IsNullOrEmpty(selectedValueVar))
+        {
+          return;
+        }
+
+        LogMessage($"La sélection de la target de la connection string est : {selectedValueVar}");
+        await LoadTargetConnectionItems(selectedValueVar);
+      }
+    }
+
+    private async Task LoadTargetConnectionItems(string theSelectedValue)
+    {
+      if (string.IsNullOrEmpty(theSelectedValue))
       {
         return;
       }
 
       // get connection string items from the selected item
-      var decryptedContent = EncryptionHelper.Decrypt(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, selectedValue)));
+      var decryptedContent = EncryptionHelper.Decrypt(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, theSelectedValue)));
+      var connectionStringItems = decryptedContent.Split(';').ToList();
+      foreach (var item in connectionStringItems)
+      {
+        if (item.Contains("Host"))
+        {
+          TargetHost.Text = item.Split('=')[1];
+        }
+        if (item.Contains("Port"))
+        {
+          TargetPort.Text = item.Split('=')[1];
+        }
+        if (item.Contains("Username"))
+        {
+          TargetUsername.Text = item.Split('=')[1];
+        }
+        if (item.Contains("Password"))
+        {
+          TargetPassword.Password = item.Split('=')[1];
+        }
+        if (item.Contains("Database"))
+        {
+          TargetDatabaseName.Text = item.Split('=')[1];
+        }
+      }
+    }
+
+    private async Task LoadSourceConnectionItems(string theSelectedValue)
+    {
+      if (string.IsNullOrEmpty(theSelectedValue))
+      {
+        return;
+      }
+
+      // get connection string items from the selected item
+      var decryptedContent = EncryptionHelper.Decrypt(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, theSelectedValue)));
       var connectionStringItems = decryptedContent.Split(';').ToList();
       foreach (var item in connectionStringItems)
       {
