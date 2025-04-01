@@ -312,7 +312,7 @@ namespace PostgresqlDatabaseEqualizer
         var decryptedContent = EncryptionHelper.Decrypt(encryptedContent);
         var schemas = decryptedContent.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
-        // Mettre à jour la ComboBox des schémas
+        // Mettre à jour les ComboBox des schémas
         SourceConnectionString.Items.Clear();
         TargetConnectionString.Items.Clear();
         foreach (var schema in schemas)
