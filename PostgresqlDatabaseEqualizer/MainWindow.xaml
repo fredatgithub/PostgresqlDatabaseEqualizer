@@ -77,10 +77,7 @@
             <Label Content=""/>
             <Label Content="Source connection"/>
             <ComboBox Name="SourceConnectionString" SelectedIndex="0" SelectionChanged="SourceConnectionString_SelectionChanged" DisplayMemberPath="Nom">
-              <ComboBoxItem Content=""/>
-              <ComboBoxItem Content=""/>
-              <ComboBoxItem Content=""/>
-              <ComboBoxItem Content=""/>
+              
             </ComboBox>
             <Label Content="Host"/>
             <TextBox Name="SourceHost"/>
@@ -106,10 +103,7 @@
             <Label Content=""/>
             <Label Content="Source connection"/>
             <ComboBox Name="TargetConnectionString" SelectedIndex="0">
-              <ComboBoxItem Content=""/>
-              <ComboBoxItem Content=""/>
-              <ComboBoxItem Content=""/>
-              <ComboBoxItem Content=""/>
+              
             </ComboBox>
             <Label Content="Host"/>
             <TextBox Name="TargetHost"/>

@@ -246,16 +246,6 @@ namespace PostgresqlDatabaseEqualizer
         SourceConnectionString.Items.Add(item);
         TargetConnectionString.Items.Add(item);
       }
-
-      //if (SourceConnectionString.SelectedIndex == -1)
-      //{
-      //  SourceConnectionString.SelectedIndex = 0;
-      //}
-
-      //if (TargetConnectionString.SelectedIndex == -1)
-      //{
-      //  TargetConnectionString.SelectedIndex = 0;
-      //}
     }
 
     private void SourceConnectionString_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -264,6 +254,12 @@ namespace PostgresqlDatabaseEqualizer
       if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
       {
         string selectedValue = selectedItem.Content.ToString();
+        if (string.IsNullOrEmpty(selectedValue))
+        {
+          return;
+        }
+
+        LogMessage($"La sélection de la source de la connection string est : {selectedValue}");
         LoadConnectionItems(selectedValue);
       }
     }
