@@ -77,7 +77,6 @@
             <Label Content=""/>
             <Label Content="Source connection"/>
             <ComboBox Name="SourceConnectionString" SelectedIndex="0" SelectionChanged="SourceConnectionString_SelectionChanged" DisplayMemberPath="Nom">
-              
             </ComboBox>
             <Label Content="Host"/>
             <TextBox Name="SourceHost"/>
@@ -102,9 +101,7 @@
             <Label Content="Postgresql Database Target" FontSize="16" FontWeight="Bold"/>
             <Label Content=""/>
             <Label Content="Source connection"/>
-            <ComboBox Name="TargetConnectionString" SelectedIndex="0">
-              
-            </ComboBox>
+            <ComboBox Name="TargetConnectionString" SelectedIndex="0"></ComboBox>
             <Label Content="Host"/>
             <TextBox Name="TargetHost"/>
             <Label Content="Port"/>

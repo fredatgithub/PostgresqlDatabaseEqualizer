@@ -7,6 +7,8 @@ using System.Windows;
 using System.Windows.Controls;
 using PostgresqlDatabaseEqualizer.Helpers;
 using PostgresqlDatabaseEqualizer.Properties;
+using Npgsql;
+using System.Threading.Tasks;
 
 namespace PostgresqlDatabaseEqualizer
 {
@@ -248,9 +250,8 @@ namespace PostgresqlDatabaseEqualizer
       }
     }
 
-    private void SourceConnectionString_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private async void SourceConnectionString_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      // todo debug this method
       if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
       {
         string selectedValue = selectedItem.Content.ToString();
@@ -260,11 +261,11 @@ namespace PostgresqlDatabaseEqualizer
         }
 
         LogMessage($"La sélection de la source de la connection string est : {selectedValue}");
-        LoadConnectionItems(selectedValue);
+        await LoadConnectionItems(selectedValue);
       }
     }
 
-    private void LoadConnectionItems(string selectedValue)
+    private async Task LoadConnectionItems(string selectedValue)
     {
       if (string.IsNullOrEmpty(selectedValue))
       {
@@ -296,6 +297,35 @@ namespace PostgresqlDatabaseEqualizer
         {
           SourceDatabaseName.Text = item.Split('=')[1];
         }
+      }
+
+      // Charger les schémas depuis le fichier schemas.txt
+      LoadDatabaseSchemas();
+    }
+
+    private void LoadDatabaseSchemas()
+    {
+      try
+      {
+        // Charger les schémas depuis le fichier schemas.txt
+        var encryptedContent = File.ReadAllText(_schemaFilename);
+        var decryptedContent = EncryptionHelper.Decrypt(encryptedContent);
+        var schemas = decryptedContent.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+        // Mettre à jour la ComboBox des schémas
+        SourceConnectionString.Items.Clear();
+        TargetConnectionString.Items.Clear();
+        foreach (var schema in schemas)
+        {
+          SourceConnectionString.Items.Add(schema);
+          TargetConnectionString.Items.Add(schema);
+        }
+
+        LogMessage($"Schémas chargés avec succès ({schemas.Count} schémas trouvés)");
+      }
+      catch (Exception exception)
+      {
+        LogMessage($"Erreur lors du chargement des schémas : {exception.Message}");
       }
     }
 
