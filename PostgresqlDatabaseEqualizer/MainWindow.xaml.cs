@@ -17,8 +17,8 @@ namespace PostgresqlDatabaseEqualizer
   /// </summary>
   public partial class MainWindow: Window
   {
-    private bool _sourceConnectionOK;
-    private bool _destinationConnectionOK;
+    private readonly bool _sourceConnectionOK;
+    private readonly bool _destinationConnectionOK;
     private const string _schemaFilename = "schemas.txt";
     private const string _sourceFilename1 = "sourceConnectionStringSchema1.txt";
     private const string _sourceFilename2 = "sourceConnectionStringSchema2.txt";
@@ -31,8 +31,8 @@ namespace PostgresqlDatabaseEqualizer
     private const string _targetFilename4 = "targetConnectionStringSchema4.txt";
 
     private List<string> _allSchemas;
-    private string _sourceConnectionString;
-    private string _targetConnectionString;
+    private readonly string _sourceConnectionString;
+    private readonly string _targetConnectionString;
 
     private readonly string _logFile = "log.txt";
 
@@ -134,14 +134,6 @@ namespace PostgresqlDatabaseEqualizer
            .ToList();
     }
 
-    private void ButtonConnectionTarget_Click(object sender, RoutedEventArgs e)
-    {
-      //SourceConnectionTextBox.IsEnabled = false;
-      //SourceConnectionOKIcon.Foreground = Brushes.Green;
-      //_sourceConnectionOK = true;
-      //MessageBox.Show("Please enter a connection string", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-    }
-
     private static void CreateFileIfNotExist(string fileName)
     {
       string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
@@ -190,7 +182,6 @@ namespace PostgresqlDatabaseEqualizer
       settings.Save();
       SaveLogs();
     }
-
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
@@ -252,32 +243,26 @@ namespace PostgresqlDatabaseEqualizer
 
     private async void SourceConnectionString_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
+      string selectedValue = SourceConnectionString.SelectedItem.ToString();
+      if (selectedValue == null)
       {
-        string selectedValue = selectedItem.Content.ToString();
-        if (string.IsNullOrEmpty(selectedValue))
-        {
-          return;
-        }
-
-        LogMessage($"La sélection de la source de la connection string est : {selectedValue}");
-        await LoadSourceConnectionItems(selectedValue);
+        return;
       }
+
+      LogMessage($"La sélection de la source de la connection string est : {selectedValue}");
+      await LoadSourceConnectionItems(selectedValue);
     }
 
     private async void TargetConnectionString_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
+      string selectedValue = TargetConnectionString.SelectedItem.ToString();
+      if (selectedValue == null)
       {
-        string selectedValueVar = selectedItem.Content.ToString();
-        if (string.IsNullOrEmpty(selectedValueVar))
-        {
-          return;
-        }
-
-        LogMessage($"La sélection de la target de la connection string est : {selectedValueVar}");
-        await LoadTargetConnectionItems(selectedValueVar);
+        return;
       }
+
+      LogMessage($"La sélection de la target de la connection string est : {selectedValue}");
+      await LoadTargetConnectionItems(selectedValue);
     }
 
     private async Task LoadTargetConnectionItems(string theSelectedValue)
@@ -288,7 +273,8 @@ namespace PostgresqlDatabaseEqualizer
       }
 
       // get connection string items from the selected item
-      var decryptedContent = EncryptionHelper.Decrypt(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, theSelectedValue)));
+      string filename = FindFilenameForSchema(theSelectedValue);
+      var decryptedContent = EncryptionHelper.Decrypt(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filename)));
       var connectionStringItems = decryptedContent.Split(';').ToList();
       foreach (var item in connectionStringItems)
       {
@@ -303,6 +289,7 @@ namespace PostgresqlDatabaseEqualizer
         if (item.Contains("Username"))
         {
           TargetUsername.Text = item.Split('=')[1];
+          TargetSchema.Text = item.Split('=')[1];
         }
         if (item.Contains("Password"))
         {
@@ -323,7 +310,8 @@ namespace PostgresqlDatabaseEqualizer
       }
 
       // get connection string items from the selected item
-      var decryptedContent = EncryptionHelper.Decrypt(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, theSelectedValue)));
+      string filename = FindFilenameForSchema(theSelectedValue, false);
+      var decryptedContent = EncryptionHelper.Decrypt(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filename)));
       var connectionStringItems = decryptedContent.Split(';').ToList();
       foreach (var item in connectionStringItems)
       {
@@ -338,6 +326,7 @@ namespace PostgresqlDatabaseEqualizer
         if (item.Contains("Username"))
         {
           SourceUsername.Text = item.Split('=')[1];
+          SourceSchema.Text = item.Split('=')[1];
         }
         if (item.Contains("Password"))
         {
@@ -348,9 +337,21 @@ namespace PostgresqlDatabaseEqualizer
           SourceDatabaseName.Text = item.Split('=')[1];
         }
       }
+    }
 
-      // Charger les schémas depuis le fichier schemas.txt
-      LoadDatabaseSchemas();
+    private static string FindFilenameForSchema(string schemaName, bool targetFilename = true)
+    {
+      var fileContent = File.ReadAllLines(_schemaFilename);
+      var fileContentDecrypted = EncryptionHelper.Decrypt(string.Join(Environment.NewLine, fileContent)).Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+      int schemaIndex = fileContentDecrypted.IndexOf(schemaName);
+
+      var returnSchema = _targetFilename1.Replace("1", (schemaIndex + 1).ToString());
+      if (!targetFilename)
+      {
+        returnSchema = returnSchema.Replace("target", "source");
+      }
+
+      return returnSchema;
     }
 
     private void LoadDatabaseSchemas()
@@ -405,6 +406,18 @@ namespace PostgresqlDatabaseEqualizer
         txtLogs.ScrollToEnd();
         SaveLogs();
       });
+    }
+
+    private void ButtonConnectionSource_Click(object sender, RoutedEventArgs e)
+    {
+      // Todo add code 
+      MessageBox.Show("Source Connexion to be tested");
+    }
+
+    private void ButtonConnectionTarget_Click(object sender, RoutedEventArgs e)
+    {
+      // Todo add code 
+      MessageBox.Show("Target Connexion to be tested");
     }
   }
 }

@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 
 namespace PostgresqlDatabaseEqualizer.Helpers
 {
-  public class EncryptionHelper
+  public static class EncryptionHelper
   {
     private static readonly string Key = "DB_MIGRATOR_2025_KEY";  // Encryption key
 
@@ -43,7 +43,10 @@ namespace PostgresqlDatabaseEqualizer.Helpers
     {
       try
       {
-        if (string.IsNullOrEmpty(cipherText)) return string.Empty;
+        if (string.IsNullOrEmpty(cipherText))
+        {
+          return string.Empty;
+        }
 
         byte[] cipherBytes = Convert.FromBase64String(cipherText);
 

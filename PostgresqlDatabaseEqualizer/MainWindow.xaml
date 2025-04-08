@@ -94,7 +94,8 @@
             <Button Name="ButtonConnectionSource" Content="Test Connection" 
                     Background="#FF007ACC"
                     Foreground="White"
-                    Height="30"/>
+                    Height="30"
+                    Click="ButtonConnectionSource_Click"/>
 
           </StackPanel>
           <StackPanel Name="ConnectionTarget" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" Margin="10,0,10,0">
