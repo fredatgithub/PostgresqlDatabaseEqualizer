@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using PostgresqlDatabaseEqualizer.Helpers;
-using PostgresqlDatabaseEqualizer.Properties;
+using System.Windows.Media;
+using Newtonsoft.Json;
 using Npgsql;
-using System.Threading.Tasks;
+using PostgresqlDatabaseEqualizer.Helpers;
+using PostgresqlDatabaseEqualizer.Models;
+using PostgresqlDatabaseEqualizer.Properties;
 
 namespace PostgresqlDatabaseEqualizer
 {
@@ -302,6 +306,56 @@ namespace PostgresqlDatabaseEqualizer
       }
     }
 
+    private async Task<string> GetConnectionStringFromCombobox(string theSelectedValue)
+    {
+      if (string.IsNullOrEmpty(theSelectedValue))
+      {
+        return string.Empty;
+      }
+
+      // get connection string items from the selected item
+      string filename = FindFilenameForSchema(theSelectedValue);
+      var decryptedContent = EncryptionHelper.Decrypt(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filename)));
+      var connectionStringItems = decryptedContent.Split(';').ToList();
+      var result = new StringBuilder();
+      foreach (var item in connectionStringItems)
+      {
+        if (item.Contains("Host"))
+        {
+          result.Append("Host=");
+          result.Append(item.Split('=')[1]);
+          result.Append(";");
+        }
+        if (item.Contains("Port"))
+        {
+          result.Append("Port=");
+          result.Append(item.Split('=')[1]);
+          result.Append(";");
+        }
+        if (item.Contains("Username"))
+        {
+          result.Append("Username=");
+          result.Append(item.Split('=')[1]);
+          result.Append(";");
+        }
+        if (item.Contains("Password"))
+        {
+          result.Append("Password=");
+          result.Append(item.Split('=')[1]);
+          result.Append(";");
+        }
+        if (item.Contains("Database"))
+        {
+          result.Append("Database=");
+          result.Append(item.Split('=')[1]);
+          result.Append(";");
+        }
+      }
+
+      string finalConnectionString = result.ToString();
+      return finalConnectionString;
+    }
+
     private async Task LoadSourceConnectionItems(string theSelectedValue)
     {
       if (string.IsNullOrEmpty(theSelectedValue))
@@ -408,10 +462,174 @@ namespace PostgresqlDatabaseEqualizer
       });
     }
 
-    private void ButtonConnectionSource_Click(object sender, RoutedEventArgs e)
+    private async void ButtonConnectionSource_Click(object sender, RoutedEventArgs e)
     {
-      // Todo add code 
-      MessageBox.Show("Source Connexion to be tested");
+      NpgsqlConnection connection = null;
+      try
+      {
+        ButtonConnectionSource.IsEnabled = false;
+        ResetButtonColor(ButtonConnectionSource);
+        LogMessage("Testing source PostgreSQL connection...");
+        string selectedValue = SourceConnectionString.SelectedItem.ToString();
+        connection = new NpgsqlConnection(await GetConnectionStringFromCombobox(selectedValue));
+        await connection.OpenAsync();
+        LogMessage("PostgreSQL connection successful! ");
+        SetButtonSuccess(ButtonConnectionSource);
+      }
+      catch (Exception exception)
+      {
+        LogMessage($"PostgreSQL connection failed: {exception.Message} ");
+        SetButtonError(ButtonConnectionSource);
+      }
+      finally
+      {
+        ButtonConnectionSource.IsEnabled = true;
+        // close the connection
+        if (connection?.State != System.Data.ConnectionState.Closed)
+        {
+          await connection.CloseAsync();
+        }
+      }
+    }
+
+    private string GetSourceConnectionString()
+    {
+      try
+      {
+        var server = string.Empty;
+        var port = string.Empty;
+        var database = string.Empty;
+        var username = string.Empty;
+        var password = string.Empty;
+        Dispatcher.Invoke(() =>
+        {
+          server = SourceHost.Text;
+          port = SourcePort.Text;
+          database = SourceDatabaseName.Text;
+          username = SourceUsername.Text;
+          password = SourcePassword.Password;
+        });
+
+        var builder = new NpgsqlConnectionStringBuilder
+        {
+          Host = server,
+          Port = int.Parse(port),
+          Database = database,
+          Username = username,
+          Password = password
+        };
+
+        // Vérifier les champs obligatoires
+        if (string.IsNullOrEmpty(server))
+        {
+          throw new ArgumentException("Source PostgreSQL host is required.");
+        }
+
+        if (string.IsNullOrEmpty(database))
+        {
+          throw new ArgumentException("Source PostgreSQL database is required.");
+        }
+
+        if (!int.TryParse(port, out int portNumber) || portNumber <= 0)
+        {
+          throw new ArgumentException("Invalid Source PostgreSQL port number.");
+        }
+
+        return builder.ConnectionString;
+      }
+      catch (Exception exception)
+      {
+        throw new ArgumentException($"Error building Source PostgreSQL connection string: {exception.Message}");
+      }
+    }
+
+    private static void SetButtonSuccess(Button button)
+    {
+      button.Background = new SolidColorBrush(Color.FromRgb(40, 167, 69));
+    }
+
+    private static void SetButtonError(Button button)
+    {
+      button.Background = new SolidColorBrush(Color.FromRgb(220, 53, 69));
+    }
+
+    private string GetSourcePostgresConnectionString()
+    {
+      try
+      {
+        var server = string.Empty;
+        var port = string.Empty;
+        var database = string.Empty;
+        Dispatcher.Invoke(() =>
+        {
+          server = SourceHost.Text;
+          port = SourcePort.Text;
+          database = SourceDatabaseName.Text;
+        });
+
+        var builder = new NpgsqlConnectionStringBuilder();
+        var credentials = LoadCredentials("to be replaced filename.txt");
+
+        if (credentials == null || string.IsNullOrEmpty(credentials.Username) || string.IsNullOrEmpty(credentials.Password))
+        {
+          throw new ArgumentException("PostgreSQL credentials are not configured.");
+        }
+
+        builder.Host = server;
+        builder.Port = int.Parse(port);
+        builder.Database = database;
+        builder.Username = credentials.Username;
+        builder.Password = credentials.Password;
+
+        // Vérifier les champs obligatoires
+        if (string.IsNullOrEmpty(server))
+        {
+          throw new ArgumentException("Source PostgreSQL host is required.");
+        }
+
+        if (string.IsNullOrEmpty(database))
+        {
+          throw new ArgumentException("Source PostgreSQL database is required.");
+        }
+
+        if (!int.TryParse(port, out int portNumber) || portNumber <= 0)
+        {
+          throw new ArgumentException("Invalid Source PostgreSQL port number.");
+        }
+
+        return builder.ConnectionString;
+      }
+      catch (Exception exception)
+      {
+        throw new ArgumentException($"Error building Source PostgreSQL connection string: {exception.Message}");
+      }
+    }
+
+    private static DbCredentials LoadCredentials(string filename)
+    {
+      try
+      {
+        if (File.Exists(filename))
+        {
+          var encrypted = File.ReadAllText(filename);
+          var decrypted = EncryptionHelper.Decrypt(encrypted);
+          if (!string.IsNullOrEmpty(decrypted))
+          {
+            return JsonConvert.DeserializeObject<DbCredentials>(decrypted);
+          }
+        }
+        return null;
+      }
+      catch (Exception exception)
+      {
+        MessageBox.Show($"Error loading credentials from {filename}: {exception.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        return null;
+      }
+    }
+
+    private static void ResetButtonColor(Button button)
+    {
+      button.Background = new SolidColorBrush(Color.FromRgb(0x00, 0x7A, 0xCC));
     }
 
     private void ButtonConnectionTarget_Click(object sender, RoutedEventArgs e)
