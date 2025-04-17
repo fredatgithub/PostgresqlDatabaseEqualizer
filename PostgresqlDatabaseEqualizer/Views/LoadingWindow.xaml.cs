@@ -1,27 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace PostgresqlDatabaseEqualizer.Views
 {
-    /// <summary>
-    /// Logique d'interaction pour LoadingWindow.xaml
-    /// </summary>
-    public partial class LoadingWindow : Window
+  /// <summary>
+  /// Logique d'interaction pour LoadingWindow.xaml
+  /// </summary>
+  public partial class LoadingWindow: Window
+  {
+    public LoadingWindow()
     {
-        public LoadingWindow()
-        {
-            InitializeComponent();
-        }
+      InitializeComponent();
     }
+
+    public LoadingWindow(Window owner)
+    {
+      InitializeComponent();
+      Owner = owner;
+
+      // Center the window vs the main window
+      Loaded += (s, e) =>
+      {
+        Left = owner.Left + (owner.Width - Width) / 2;
+        Top = owner.Top + (owner.Height - Height) / 2;
+      };
+    }
+  }
 }

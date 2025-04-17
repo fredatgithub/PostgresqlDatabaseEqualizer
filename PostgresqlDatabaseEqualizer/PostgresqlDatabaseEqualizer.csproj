@@ -118,9 +118,11 @@
     <Compile Include="Helpers\DatabaseHelper.cs" />
     <Compile Include="Helpers\EncryptionHelper.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
+    <Compile Include="Models\ColumnInfo.cs" />
     <Compile Include="Models\DbCredentials.cs" />
     <Compile Include="Models\IPostgresService.cs" />
     <Compile Include="Models\PostgresService.cs" />
+    <Compile Include="Models\TableInfo.cs" />
     <Compile Include="Views\LoadingWindow.xaml.cs">
       <DependentUpon>LoadingWindow.xaml</DependentUpon>
     </Compile>

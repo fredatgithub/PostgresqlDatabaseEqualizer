@@ -46,7 +46,7 @@
                      Margin="0,0,0,10"
                      Grid.Row="2"
                      VerticalAlignment="Stretch"
-                       FontSize="14"/>
+                       FontSize="18"/>
 
               <Button Content="Save configuration file"
                     Margin="0,0,0,10"
@@ -127,8 +127,115 @@
       <TabItem Header="Schemas">
         <Grid Background="#FFE5E5E5"/>
       </TabItem>
-      <TabItem Header="Tables">
-        <Grid Background="#FFE5E5E5"/>
+      
+      <TabItem Header="Tables" VerticalAlignment="Top">
+        <Grid Margin="10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+
+          <GroupBox Header="Source Tables" Grid.Column="0" Margin="0,0,5,0">
+            <Grid Margin="10">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+              </Grid.RowDefinitions>
+
+              <StackPanel Grid.Row="0">
+                <Button Content="Load Tables" Click="ButtonLoadSourceTables_Click"
+                                 Name="buttonLoadSourceTables"
+                                 Margin="0,0,0,10"
+                                 Padding="10,5"
+                                 Background="#FF007ACC"
+                                 Foreground="White"/>
+                <TextBox Name="txtSourceSearch" 
+                                  Margin="0,0,0,10"
+                                  Text=""
+                                  ToolTip="Search tables"/>
+              </StackPanel>
+
+              <ListView Grid.Row="1" 
+                               Name="listSourceTables"
+                               Margin="0,0,0,10">
+                <ListView.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                      <CheckBox IsChecked="{Binding IsSelected}" VerticalAlignment="Center"/>
+                      <TextBlock Text="{Binding TableName}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                      <TextBlock Text="{Binding RowCount}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                  </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                  <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="{Binding Background}"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                  </Style>
+                </ListView.ItemContainerStyle>
+              </ListView>
+
+              <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <TextBlock Text="Selected: " VerticalAlignment="Center"/>
+                <TextBlock Name="txtSourceSelectedCount" Text="0" VerticalAlignment="Center"/>
+                <TextBlock Name="txtSourceTableLabel" Text=" table" VerticalAlignment="Center"/>
+              </StackPanel>
+              <StackPanel Grid.Row="3" Orientation="Horizontal">
+                <Button x:Name = "btnMigrateTables" Content="Copy selected tables to target database" Margin="5,5,5,5" Padding="10,5" Background="#FF007ACC" Foreground="White" Click="BtnMigrateTables_Click"/>
+              </StackPanel>
+            </Grid>
+          </GroupBox>
+
+          <GroupBox Header="PostgreSQL Tables" Grid.Column="1" Margin="5,0,0,0">
+            <Grid Margin="10">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+              </Grid.RowDefinitions>
+
+              <StackPanel Grid.Row="0">
+                <Button Content="Load Tables" Click="ButtonLoadTargetTables_Click"
+                                 Name="buttonLoadTargetTables"
+                                 Margin="0,0,0,10"
+                                 Padding="10,5"
+                                 Background="#FF007ACC"
+                                 Foreground="White"/>
+                <TextBox Name="txtPostgresSearch" 
+                                  Margin="0,0,0,10"
+                                  Text=""
+                                  ToolTip="Search tables"/>
+              </StackPanel>
+
+              <ListView Grid.Row="1" 
+                               Name="listTargetTables"
+                               Margin="0,0,0,10">
+                <ListView.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                      <CheckBox IsChecked="{Binding IsSelected}" VerticalAlignment="Center"/>
+                      <TextBlock Text="{Binding TableName}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                      <TextBlock Text="{Binding RowCount}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                  </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                  <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="{Binding Background}"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                  </Style>
+                </ListView.ItemContainerStyle>
+              </ListView>
+              <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <TextBlock Text="Selected: " VerticalAlignment="Center"/>
+                <TextBlock Name="txtPostgresSelectedCount" Text="0" VerticalAlignment="Center"/>
+                <TextBlock Name="txtPostgresTableLabel" Text=" table" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Grid>
+          </GroupBox>
+        </Grid>
       </TabItem>
       <TabItem Header="Logs">
         <Grid Margin="10">
